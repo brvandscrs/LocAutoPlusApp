@@ -1,4 +1,4 @@
-namespace LocAutoPlusApp.Models
+﻿namespace LocAutoPlusApp.Models
 {
     public class Contrat
     {

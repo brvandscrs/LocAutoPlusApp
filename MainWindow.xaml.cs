@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using LocAutoPlusApp.ViewModels;
 using System.Windows;
 
 namespace LocAutoPlusApp
@@ -11,6 +11,8 @@ namespace LocAutoPlusApp
         public MainWindow()
         {
             InitializeComponent();
+            MakeContratViewModel vm = new MakeContratViewModel();
+            DataContext = vm;
         }
     }
 }
