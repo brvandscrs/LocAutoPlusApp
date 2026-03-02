@@ -19,22 +19,34 @@
         
         <StackPanel Grid.Column="1" Margin="20"
                     DataContext="{Binding SelectedContrat}">
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Id : " />
+                <TextBlock Text="{Binding Id}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="UserId : " />
+                <TextBlock Text="{Binding UserId}" />
+            </StackPanel>
             
-            <TextBlock Text="{Binding Id}" />
-
-            <TextBlock Text="{Binding UserId}" />
-
-            <TextBlock Text="DateDebut" />
+            <TextBlock Text="DateDebut" Margin="0 5 0 0"/>
             <TextBox Text="{Binding DateDebut, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBlock Text="DateFin" />
+            <TextBlock Text="DateFin" Margin="0 5 0 0"/>
             <TextBox Text="{Binding DateFin, UpdateSourceTrigger=PropertyChanged}" />
-            
-            <TextBlock Text="Montant" />
+
+            <TextBlock Text="Montant" Margin="0 5 0 0"/>
             <TextBox Text="{Binding Montant, UpdateSourceTrigger=PropertyChanged}" />
-            
-            <TextBlock Text="EtatContrat" />
+
+            <TextBlock Text="EtatContrat" Margin="0 5 0 0"/>
             <TextBox Text="{Binding EtatContrat, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Button Content="Enregistrer"
+                    Command="{Binding DataContext.SaveUserCommand,
+                              RelativeSource={RelativeSource AncestorType=Grid}
+                    }"
+                    Margin="0 20 0 0" />
         </StackPanel>
     </Grid>
 </UserControl>
