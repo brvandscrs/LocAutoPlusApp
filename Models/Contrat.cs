@@ -6,7 +6,7 @@ namespace LocAutoPlusApp.Models
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
-        [JsonPropertyName("userId")]
+        [JsonPropertyName("user_id")]
         public int UserId { get; set; }
         [JsonPropertyName("date_debut")]
         public DateTime DateDebut { get; set; }
