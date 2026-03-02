@@ -18,9 +18,9 @@ namespace LocAutoPlusApp.Views
     /// <summary>
     /// Logique d'interaction pour ListeContratView.xaml
     /// </summary>
-    public partial class ListeContratView : UserControl
+    public partial class ContratListingView : UserControl
     {
-        public ListeContratView()
+        public ContratListingView()
         {
             InitializeComponent();
         }

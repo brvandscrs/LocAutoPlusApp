@@ -11,8 +11,8 @@ namespace LocAutoPlusApp
         public MainWindow()
         {
             InitializeComponent();
-            MakeContratViewModel vm = new MakeContratViewModel();
-            DataContext = vm;
+            // MakeContratViewModel vm = new MakeContratViewModel();
+            // DataContext = vm;
         }
     }
 }
