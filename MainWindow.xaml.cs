@@ -1,5 +1,4 @@
-﻿using LocAutoPlusApp.ViewModels;
-using System.Windows;
+﻿using System.Windows;
 
 namespace LocAutoPlusApp
 {
