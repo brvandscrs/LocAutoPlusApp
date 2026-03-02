@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using LocAutoPlusApp.ViewModels;
+using System.Windows;
 
 namespace LocAutoPlusApp
 {
@@ -10,8 +11,8 @@ namespace LocAutoPlusApp
         public MainWindow()
         {
             InitializeComponent();
-            // MakeContratViewModel vm = new MakeContratViewModel();
-            // DataContext = vm;
+            ContratListingViewModel vm = new ContratListingViewModel();
+            DataContext = vm;
         }
     }
 }

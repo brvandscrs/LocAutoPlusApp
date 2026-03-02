@@ -6,7 +6,16 @@
              xmlns:local="clr-namespace:LocAutoPlusApp.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <ListBox ItemsSource="{Binding Contrats}"
+                     SelectedItem="{Binding SelectedContrat}"
+                     DisplayMemberPath="FullName"
+                     Height="200" />
+        </StackPanel>
     </Grid>
 </UserControl>

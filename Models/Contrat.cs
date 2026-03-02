@@ -17,6 +17,22 @@ namespace LocAutoPlusApp.Models
         [JsonPropertyName("etat_contrat")]
         public string EtatContrat { get; set; }
 
+        public string FullName
+        {
+            get {
+                return
+                    Id +
+                    " " +
+                    UserId +
+                    " " +
+                    DateDebut +
+                    " " +
+                    Montant +
+                    " " +
+                    EtatContrat;
+            } 
+        }
+
         public Contrat(int id, int userId, DateTime dateDebut, DateTime dateFin, decimal montant, string etatContrat)
         {
             Id = id;
