@@ -19,7 +19,22 @@
         
         <StackPanel Grid.Column="1" Margin="20"
                     DataContext="{Binding SelectedContrat}">
+            
             <TextBlock Text="{Binding Id}" />
+
+            <TextBlock Text="{Binding UserId}" />
+
+            <TextBlock Text="DateDebut" />
+            <TextBox Text="{Binding DateDebut, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock Text="DateFin" />
+            <TextBox Text="{Binding DateFin, UpdateSourceTrigger=PropertyChanged}" />
+            
+            <TextBlock Text="Montant" />
+            <TextBox Text="{Binding Montant, UpdateSourceTrigger=PropertyChanged}" />
+            
+            <TextBlock Text="EtatContrat" />
+            <TextBox Text="{Binding EtatContrat, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
     </Grid>
 </UserControl>
