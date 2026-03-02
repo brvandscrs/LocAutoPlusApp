@@ -22,6 +22,9 @@ namespace LocAutoPlusApp.ViewModels
         public ContratListingViewModel()
         {
             Contrats = new ObservableCollection<Contrat>();
+            Contrat contrat = new Contrat(1, 1, DateTime.Now, DateTime.Now.AddDays(30), 500.00m, "Actif");
+            contrat = new Contrat(1, 1, DateTime.Now, DateTime.Now.AddDays(60), 500.00m, "En cours");
+            contrat = new Contrat(1, 1, DateTime.Now, DateTime.Now, 500.00m, "Terminé");
             // LoadContrats(); // Load contrats from API or database
         }
         public event PropertyChangedEventHandler? PropertyChanged;
