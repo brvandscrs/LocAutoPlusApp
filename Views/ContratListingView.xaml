@@ -9,13 +9,17 @@
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0">
-            <ListBox ItemsSource="{Binding Contrats}"
+        
+        <ListBox Grid.Column="0"  ItemsSource="{Binding Contrats}"
                      SelectedItem="{Binding SelectedContrat}"
                      DisplayMemberPath="FullName"
-                     Height="200" />
+                     Height="400" />
+        
+        <StackPanel Grid.Column="1" Margin="20"
+                    DataContext="{Binding SelectedContrat}">
+            <TextBlock Text="{Binding Id}" />
         </StackPanel>
     </Grid>
 </UserControl>
