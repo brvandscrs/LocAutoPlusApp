@@ -9,7 +9,7 @@ namespace LocAutoPlusApp.ViewModels
     {
         private Contrat? _selectedContrat;
         public ObservableCollection<Contrat> Contrats { get; set; }
-        public Contrat SelectedContrat
+        public Contrat? SelectedContrat
         {
             get => _selectedContrat; 
             set
@@ -19,6 +19,11 @@ namespace LocAutoPlusApp.ViewModels
             }
         }
 
+        public ContratListingViewModel()
+        {
+            Contrats = new ObservableCollection<Contrat>();
+            // LoadContrats(); // Load contrats from API or database
+        }
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
