@@ -3,6 +3,7 @@ using LocAutoPlusApp.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace LocAutoPlusApp.ViewModels
 {
@@ -34,12 +35,23 @@ namespace LocAutoPlusApp.ViewModels
 
             contrat = new Contrat(1, 1, DateTime.Now, DateTime.Now, 500.00m, "Terminé");
             Contrats.Add(contrat); */
-            LoadContrats(); // Load contrats from API or database
+            _ = LoadContrats(); // Load contrats from API or database
         }
 
         private async Task LoadContrats()
         {
-            List<Contrat> data = await _contratsService.GetContrats();
+            // List<Contrat> data = await _contratsService.GetContrats();
+            try
+            {
+                var contrats = await _contratsService.GetContrats();
+                Contrats.Clear();
+                foreach (var contrat in contrats)
+                    Contrats.Add(contrat);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading users: {ex.Message}");
+            }
         }
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
