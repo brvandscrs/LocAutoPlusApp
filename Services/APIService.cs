@@ -1,6 +1,9 @@
 ﻿using LocAutoPlusApp.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using System.Windows.Controls;
 
 namespace LocAutoPlusApp.Services
 {
@@ -10,20 +13,24 @@ namespace LocAutoPlusApp.Services
         public async Task<List<Contrat>> GetContrats()
             => await _http.GetFromJsonAsync<List<Contrat>>("contrats") ?? new List<Contrat>();
 
-        /* public async Task<List<Contrat>> GetContratsAsync()
+        public async Task UpdateContrat(Contrat contrat)
         {
-            HttpResponseMessage response = await _http.GetAsync("contrats");
-            if (response.IsSuccessStatusCode)
+            var json = JsonSerializer.Serialize(contrat);
+            var bytes = Encoding.UTF8.GetBytes(json);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            content.Headers.ContentLength = bytes.Length;
+
+            var response = await _http.PutAsync($"contrats/{contrat.Id}", content);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity)
             {
-                string json = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<List<Contrat>>(json) ?? new List<Contrat>();
+                var body = await response.Content.ReadAsStringAsync();
+                var error = JsonSerializer.Deserialize<ValidationError>(body);
+                throw new Exception(error?.GetDetails() ?? "Erreur de validation");
             }
-            else
-            {
-                // Handle error (e.g., log it, throw an exception, etc.)
-                return new List<Contrat>();
-            }
-        } */
+
+            response.EnsureSuccessStatusCode();
+        }
     }
 
     internal class UsersService

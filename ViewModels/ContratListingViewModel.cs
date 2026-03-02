@@ -31,9 +31,21 @@ namespace LocAutoPlusApp.ViewModels
         public ContratListingViewModel()
         {
             Contrats = new ObservableCollection<Contrat>();
-            SaveUserCommand = new RelayCommand(async () => await SaveUserAsync(),
+            SaveUserCommand = new RelayCommand(async () => await SaveContratAsync(),
                                                () => SelectedContrat != null);
             _ = LoadContrats(); // Load contrats from API or database
+        }
+
+        private async Task SaveContratAsync()
+        {
+            try
+            {
+                await _contratsService.UpdateContrat(SelectedContrat);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur : {ex.Message}");
+            }
         }
 
         private async Task LoadContrats()
