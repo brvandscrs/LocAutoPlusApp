@@ -1,9 +1,11 @@
-﻿using LocAutoPlusApp.Models;
+﻿using LocAutoPlusApp.Commands;
+using LocAutoPlusApp.Models;
 using LocAutoPlusApp.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 
 namespace LocAutoPlusApp.ViewModels
 {
@@ -13,6 +15,9 @@ namespace LocAutoPlusApp.ViewModels
 
         private Contrat? _selectedContrat;
         public ObservableCollection<Contrat> Contrats { get; set; }
+
+        public ICommand SaveUserCommand { get; }
+
         public Contrat? SelectedContrat
         {
             get => _selectedContrat; 
@@ -26,15 +31,8 @@ namespace LocAutoPlusApp.ViewModels
         public ContratListingViewModel()
         {
             Contrats = new ObservableCollection<Contrat>();
-
-            /* Contrat contrat = new Contrat(1, 1, DateTime.Now, DateTime.Now.AddDays(30), 500.00m, "Actif");
-            Contrats.Add(contrat);
-
-            contrat = new Contrat(1, 1, DateTime.Now, DateTime.Now.AddDays(60), 500.00m, "En cours");
-            Contrats.Add(contrat);
-
-            contrat = new Contrat(1, 1, DateTime.Now, DateTime.Now, 500.00m, "Terminé");
-            Contrats.Add(contrat); */
+            SaveUserCommand = new RelayCommand(async () => await SaveUserAsync(),
+                                               () => SelectedContrat != null);
             _ = LoadContrats(); // Load contrats from API or database
         }
 
