@@ -1,15 +1,25 @@
-﻿namespace LocAutoPlusApp.Models
+﻿using System.Text.Json.Serialization;
+
+namespace LocAutoPlusApp.Models
 {
     public class Contrat
     {
-        public int UserId { get; }
-        public DateTime DateDebut { get; }
-        public DateTime DateFin { get; }
-        public decimal Montant { get; }
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+        [JsonPropertyName("userId")]
+        public int UserId { get; set; }
+        [JsonPropertyName("date_debut")]
+        public DateTime DateDebut { get; set; }
+        [JsonPropertyName("date_fin")]
+        public DateTime DateFin { get; set; }
+        [JsonPropertyName("montant")]
+        public decimal Montant { get; set; }
+        [JsonPropertyName("etat_contrat")]
         public string EtatContrat { get; set; }
 
-        public Contrat(int userId, DateTime dateDebut, DateTime dateFin, decimal montant, string etatContrat)
+        public Contrat(int id, int userId, DateTime dateDebut, DateTime dateFin, decimal montant, string etatContrat)
         {
+            Id = id;
             UserId = userId;
             DateDebut = dateDebut;
             DateFin = dateFin;
