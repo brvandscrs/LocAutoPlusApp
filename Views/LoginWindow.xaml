@@ -1,0 +1,142 @@
+﻿<Window x:Class="LocAutoPlusApp.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LocAutoPlusApp — Connexion" Height="520" Width="440"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#0F0F0F">
+
+    <Window.Resources>
+        <!-- Style TextBox -->
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Background"   Value="#1E1E1E"/>
+            <Setter Property="Foreground"   Value="White"/>
+            <Setter Property="BorderBrush"  Value="#333333"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"      Value="12,10"/>
+            <Setter Property="FontSize"     Value="14"/>
+            <Setter Property="FontFamily"   Value="Segoe UI"/>
+            <Setter Property="Height"       Value="44"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#C9A84C"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Style PasswordBox -->
+        <Style x:Key="PasswordStyle" TargetType="PasswordBox">
+            <Setter Property="Background"   Value="#1E1E1E"/>
+            <Setter Property="Foreground"   Value="White"/>
+            <Setter Property="BorderBrush"  Value="#333333"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"      Value="12,10"/>
+            <Setter Property="FontSize"     Value="14"/>
+            <Setter Property="FontFamily"   Value="Segoe UI"/>
+            <Setter Property="Height"       Value="44"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Style Bouton principal -->
+        <Style x:Key="BtnGold" TargetType="Button">
+            <Setter Property="Background"   Value="#C9A84C"/>
+            <Setter Property="Foreground"   Value="#0F0F0F"/>
+            <Setter Property="FontSize"     Value="14"/>
+            <Setter Property="FontWeight"   Value="SemiBold"/>
+            <Setter Property="FontFamily"   Value="Segoe UI"/>
+            <Setter Property="Height"       Value="46"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"       Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E8D5A3"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#B8963C"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#555555"/>
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <StackPanel VerticalAlignment="Center" Margin="48,0">
+
+            <!-- Logo -->
+            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,6">
+                <Run Text="LocAuto" FontSize="32" FontWeight="Bold"
+                     FontFamily="Georgia" Foreground="#C9A84C"/>
+                <Run Text="Plus" FontSize="32" FontWeight="Bold"
+                     FontFamily="Georgia" Foreground="White"/>
+            </TextBlock>
+
+            <!-- Sous-titre -->
+            <TextBlock Text="Espace personnel employé"
+                       HorizontalAlignment="Center"
+                       FontSize="13" Foreground="#888888"
+                       FontFamily="Segoe UI" Margin="0,0,0,40"/>
+
+            <!-- Email -->
+            <TextBlock Text="Adresse e-mail" Foreground="#AAAAAA"
+                       FontSize="12" FontFamily="Segoe UI" Margin="0,0,0,6"/>
+            <TextBox x:Name="TxtEmail"
+                     Style="{StaticResource InputStyle}"
+                     Margin="0,0,0,16"/>
+
+            <!-- Mot de passe -->
+            <TextBlock Text="Mot de passe" Foreground="#AAAAAA"
+                       FontSize="12" FontFamily="Segoe UI" Margin="0,0,0,6"/>
+            <PasswordBox x:Name="TxtPassword"
+                         Style="{StaticResource PasswordStyle}"
+                         Margin="0,0,0,8"/>
+
+            <!-- Message d'erreur -->
+            <TextBlock x:Name="TxtErreur"
+                       Foreground="#E74C3C"
+                       FontSize="12" FontFamily="Segoe UI"
+                       Visibility="Collapsed"
+                       Margin="0,0,0,16"
+                       TextWrapping="Wrap"/>
+
+            <!-- Bouton connexion -->
+            <Button x:Name="BtnConnexion"
+                    Content="Se connecter"
+                    Style="{StaticResource BtnGold}"
+                    Margin="0,16,0,0"
+                    Click="BtnConnexion_Click"/>
+
+            <!-- Indicateur chargement -->
+            <TextBlock x:Name="TxtChargement"
+                       Text="Connexion en cours..."
+                       Foreground="#888888" FontSize="12"
+                       FontFamily="Segoe UI"
+                       HorizontalAlignment="Center"
+                       Visibility="Collapsed"
+                       Margin="0,12,0,0"/>
+        </StackPanel>
+
+        <!-- Footer -->
+        <TextBlock Text="LocAutoPlus © 2026 — Accès réservé au personnel"
+                   Foreground="#444444" FontSize="11"
+                   FontFamily="Segoe UI"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,0,20"/>
+    </Grid>
+</Window>

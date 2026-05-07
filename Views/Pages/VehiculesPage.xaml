@@ -1,0 +1,260 @@
+﻿<Page x:Class="LocAutoPlusApp.Views.Pages.VehiculesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:LocAutoPlusApp.Views.Pages"
+      mc:Ignorable="d"
+      d:DesignHeight="650" d:DesignWidth="870"
+      Title="VehiculesPage"
+      Background="#F4F0E8">
+
+    <Page.Resources>
+        <Style x:Key="BtnAction" TargetType="Button">
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Padding"         Value="12,6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ── Barre d'outils ── -->
+        <Border Grid.Row="0" Background="White" CornerRadius="12"
+                Padding="16" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Filtre statut -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal"
+                            VerticalAlignment="Center" Margin="0,0,12,0">
+                    <TextBlock Text="Statut :" FontSize="12"
+                               Foreground="#999999" FontFamily="Segoe UI"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox x:Name="CbStatut" Width="140" Height="36"
+                              FontFamily="Segoe UI" FontSize="13"
+                              SelectionChanged="CbStatut_SelectionChanged">
+                        <ComboBoxItem Content="Tous" IsSelected="True"/>
+                        <ComboBoxItem Content="disponible"/>
+                        <ComboBoxItem Content="loue"/>
+                        <ComboBoxItem Content="maintenance"/>
+                        <ComboBoxItem Content="hors_service"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Recherche -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBox x:Name="TxtRecherche"
+                             Width="260" Height="36"
+                             FontFamily="Segoe UI" FontSize="13"
+                             Padding="12,0"
+                             VerticalContentAlignment="Center"
+                             BorderBrush="#E8E8E4" BorderThickness="1.5"
+                             Background="White"
+                             TextChanged="TxtRecherche_TextChanged"/>
+                    <TextBlock x:Name="TxtPlaceholder"
+                               Text="Rechercher une marque, modèle..."
+                               Foreground="#BBBBBB" FontSize="12"
+                               FontFamily="Segoe UI"
+                               VerticalAlignment="Center"
+                               Margin="-248,0,0,0"
+                               IsHitTestVisible="False"/>
+                </StackPanel>
+
+                <!-- Bouton Ajouter -->
+                <Button Grid.Column="2"
+                        Content="+ Nouveau véhicule"
+                        Style="{StaticResource BtnAction}"
+                        Background="#0F0F0F" Foreground="White"
+                        Click="BtnAjouter_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- ── Contenu principal ── -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Liste véhicules -->
+            <Border Grid.Column="0" Background="White"
+                    CornerRadius="12" Margin="0,0,12,0">
+                <DataGrid x:Name="DgVehicules"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          BorderThickness="0"
+                          Background="White"
+                          RowBackground="White"
+                          AlternatingRowBackground="#FAFAF8"
+                          FontFamily="Segoe UI" FontSize="12"
+                          ColumnHeaderHeight="40" RowHeight="44"
+                          SelectionChanged="DgVehicules_SelectionChanged"
+                          Cursor="Hand">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background"      Value="#F4F0E8"/>
+                            <Setter Property="Foreground"      Value="#999999"/>
+                            <Setter Property="FontSize"        Value="11"/>
+                            <Setter Property="FontWeight"      Value="SemiBold"/>
+                            <Setter Property="Padding"         Value="12,0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="IMMAT."    Binding="{Binding Immatriculation}" Width="110"/>
+                        <DataGridTextColumn Header="MARQUE"    Binding="{Binding Marque}"          Width="*"/>
+                        <DataGridTextColumn Header="MODÈLE"    Binding="{Binding Modele}"          Width="*"/>
+                        <DataGridTextColumn Header="CATÉGORIE" Binding="{Binding Categorie}"       Width="110"/>
+                        <DataGridTextColumn Header="ANNÉE"     Binding="{Binding Annee}"           Width="70"/>
+                        <DataGridTextColumn Header="STATUT"    Binding="{Binding StatutLabel}"     Width="110"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Fiche véhicule -->
+            <Border Grid.Column="1" Background="White"
+                    CornerRadius="12" Padding="20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Fiche véhicule" FontSize="14"
+                                   FontWeight="SemiBold" FontFamily="Segoe UI"
+                                   Margin="0,0,0,16"/>
+
+                        <StackPanel x:Name="PanelFiche" Visibility="Collapsed">
+
+                            <!-- Icône véhicule -->
+                            <Border Background="#0F0F0F" CornerRadius="12"
+                                    Width="80" Height="80"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,12">
+                                <TextBlock Text="🚗" FontSize="36"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Nom véhicule -->
+                            <TextBlock x:Name="TxtFicheNom"
+                                       FontSize="16" FontWeight="SemiBold"
+                                       FontFamily="Segoe UI"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,4"/>
+
+                            <!-- Badge statut -->
+                            <Border x:Name="BadgeStatut"
+                                    CornerRadius="20" Padding="10,4"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,16">
+                                <TextBlock x:Name="TxtFicheStatut"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           FontFamily="Segoe UI"/>
+                            </Border>
+
+                            <!-- Infos -->
+                            <ItemsControl x:Name="ListInfos">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="90"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Label}"
+                                                       Foreground="#AAAAAA"
+                                                       FontSize="11"
+                                                       FontFamily="Segoe UI"/>
+                                            <TextBlock Text="{Binding Valeur}"
+                                                       Grid.Column="1"
+                                                       FontSize="12"
+                                                       FontFamily="Segoe UI"
+                                                       TextWrapping="Wrap"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Rectangle Height="1" Fill="#F0F0F0" Margin="0,12,0,12"/>
+
+                            <!-- Bouton changer statut -->
+                            <TextBlock Text="CHANGER LE STATUT" FontSize="10"
+                                       FontWeight="SemiBold" Foreground="#999999"
+                                       FontFamily="Segoe UI" Margin="0,0,0,8"/>
+
+                            <WrapPanel Margin="0,0,0,12">
+                                <Button Content="Disponible"
+                                        Style="{StaticResource BtnAction}"
+                                        Background="#D4EDDA" Foreground="#155724"
+                                        Margin="0,0,6,6"
+                                        Tag="disponible"
+                                        Click="BtnChangerStatut_Click"/>
+                                <Button Content="Maintenance"
+                                        Style="{StaticResource BtnAction}"
+                                        Background="#FFF3CD" Foreground="#856404"
+                                        Margin="0,0,6,6"
+                                        Tag="maintenance"
+                                        Click="BtnChangerStatut_Click"/>
+                                <Button Content="Hors service"
+                                        Style="{StaticResource BtnAction}"
+                                        Background="#FEE2E2" Foreground="#C0392B"
+                                        Margin="0,0,6,6"
+                                        Tag="hors_service"
+                                        Click="BtnChangerStatut_Click"/>
+                            </WrapPanel>
+
+                            <Rectangle Height="1" Fill="#F0F0F0" Margin="0,0,0,12"/>
+
+                            <!-- Actions -->
+                            <Button x:Name="BtnModifier"
+                                    Content="✏️  Modifier"
+                                    Style="{StaticResource BtnAction}"
+                                    Background="#0F0F0F" Foreground="White"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,0,0,8"
+                                    Click="BtnModifier_Click"/>
+                            <Button x:Name="BtnSupprimer"
+                                    Content="🗑️  Supprimer"
+                                    Style="{StaticResource BtnAction}"
+                                    Background="#FEE2E2" Foreground="#C0392B"
+                                    HorizontalAlignment="Stretch"
+                                    Click="BtnSupprimer_Click"/>
+                        </StackPanel>
+
+                        <TextBlock x:Name="TxtSelectionner"
+                                   Text="Sélectionnez un véhicule pour voir sa fiche."
+                                   Foreground="#CCCCCC" FontSize="12"
+                                   FontFamily="Segoe UI" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

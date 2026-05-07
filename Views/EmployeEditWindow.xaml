@@ -1,0 +1,158 @@
+﻿<Window x:Class="LocAutoPlusApp.Views.EmployeEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Employé" Height="480" Width="460"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F4F0E8">
+
+    <Window.Resources>
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Height"          Value="38"/>
+            <Setter Property="Padding"         Value="10,0"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="BorderBrush"     Value="#E8E8E4"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Background"      Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="BtnStyle" TargetType="Button">
+            <Setter Property="Height"          Value="40"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Margin="24">
+        <StackPanel>
+
+            <TextBlock x:Name="TxtTitre"
+                       Text="Nouvel employé"
+                       FontSize="20" FontWeight="Bold"
+                       FontFamily="Georgia" Margin="0,0,0,24"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Nom -->
+                <StackPanel Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="Nom *" FontSize="11" Foreground="#999999"
+                               FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                    <TextBox x:Name="TxtNom" Style="{StaticResource InputStyle}"/>
+                </StackPanel>
+
+                <!-- Prénom -->
+                <StackPanel Grid.Row="0" Grid.Column="2">
+                    <TextBlock Text="Prénom *" FontSize="11" Foreground="#999999"
+                               FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                    <TextBox x:Name="TxtPrenom" Style="{StaticResource InputStyle}"/>
+                </StackPanel>
+
+                <!-- Email -->
+                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                    <TextBlock Text="Adresse e-mail *" FontSize="11" Foreground="#999999"
+                               FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                    <TextBox x:Name="TxtEmail" Style="{StaticResource InputStyle}"/>
+                </StackPanel>
+
+                <!-- Rôle -->
+                <StackPanel Grid.Row="4" Grid.Column="0">
+                    <TextBlock Text="Rôle *" FontSize="11" Foreground="#999999"
+                               FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="CbRole" Height="38"
+                              FontFamily="Segoe UI" FontSize="13"
+                              BorderBrush="#E8E8E4" Background="White">
+                        <ComboBoxItem Content="agent"  IsSelected="True"/>
+                        <ComboBoxItem Content="admin"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Mot de passe -->
+                <StackPanel x:Name="PanelPassword"
+                            Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3">
+                    <TextBlock Text="Mot de passe *" FontSize="11" Foreground="#999999"
+                               FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                    <PasswordBox x:Name="TxtPassword"
+                                 Height="38" Padding="10,0"
+                                 FontFamily="Segoe UI" FontSize="13"
+                                 BorderBrush="#E8E8E4" BorderThickness="1.5"
+                                 Background="White"
+                                 VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Nouveau mot de passe (édition) -->
+                <StackPanel x:Name="PanelNewPassword"
+                            Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3"
+                            Visibility="Collapsed">
+                    <TextBlock Text="Nouveau mot de passe (laisser vide = inchangé)"
+                               FontSize="11" Foreground="#999999"
+                               FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                    <PasswordBox x:Name="TxtNewPassword"
+                                 Height="38" Padding="10,0"
+                                 FontFamily="Segoe UI" FontSize="13"
+                                 BorderBrush="#E8E8E4" BorderThickness="1.5"
+                                 Background="White"
+                                 VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+
+            <TextBlock x:Name="TxtErreur"
+                       Foreground="#C0392B" FontSize="12"
+                       FontFamily="Segoe UI"
+                       Visibility="Collapsed"
+                       Margin="0,12,0,0"
+                       TextWrapping="Wrap"/>
+
+            <Grid Margin="0,24,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Annuler"
+                        Style="{StaticResource BtnStyle}"
+                        Background="#E8E8E4" Foreground="#555555"
+                        Click="BtnAnnuler_Click"/>
+                <Button Grid.Column="2" Content="Enregistrer"
+                        Style="{StaticResource BtnStyle}"
+                        Background="#0F0F0F" Foreground="White"
+                        Click="BtnEnregistrer_Click"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>

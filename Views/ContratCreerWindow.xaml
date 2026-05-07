@@ -1,0 +1,167 @@
+﻿<Window x:Class="LocAutoPlusApp.Views.ContratCreerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Nouveau contrat" Height="480" Width="480"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F4F0E8">
+
+    <Window.Resources>
+        <Style x:Key="ComboStyle" TargetType="ComboBox">
+            <Setter Property="Height"          Value="38"/>
+            <Setter Property="Padding"         Value="10,0"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="BorderBrush"     Value="#E8E8E4"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Background"      Value="White"/>
+        </Style>
+        <Style x:Key="BtnStyle" TargetType="Button">
+            <Setter Property="Height"          Value="40"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Margin="24">
+        <StackPanel>
+            <TextBlock Text="Nouveau contrat"
+                       FontSize="20" FontWeight="Bold"
+                       FontFamily="Georgia" Margin="0,0,0,24"/>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Client -->
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="Client *" FontSize="11" Foreground="#999999"
+                               FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="CbClient"
+                              Style="{StaticResource ComboStyle}"
+                              DisplayMemberPath="NomComplet"
+                              SelectedValuePath="Id"
+                              SelectionChanged="CbClient_SelectionChanged"/>
+                </StackPanel>
+
+                <!-- Véhicule -->
+                <StackPanel Grid.Row="2">
+                    <TextBlock Text="Véhicule disponible *" FontSize="11" Foreground="#999999"
+                               FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="CbVehicule"
+                              Style="{StaticResource ComboStyle}"
+                              DisplayMemberPath="Label"
+                              SelectedValuePath="Id"
+                              SelectionChanged="CbVehicule_SelectionChanged"/>
+                </StackPanel>
+
+                <!-- Dates -->
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Date de début *" FontSize="11" Foreground="#999999"
+                                   FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                        <DatePicker x:Name="DpDebut" Height="38"
+                                    FontFamily="Segoe UI" FontSize="13"
+                                    BorderBrush="#E8E8E4" Background="White"
+                                    SelectedDateChanged="Dates_Changed"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Date de fin *" FontSize="11" Foreground="#999999"
+                                   FontFamily="Segoe UI" Margin="0,0,0,5"/>
+                        <DatePicker x:Name="DpFin" Height="38"
+                                    FontFamily="Segoe UI" FontSize="13"
+                                    BorderBrush="#E8E8E4" Background="White"
+                                    SelectedDateChanged="Dates_Changed"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Récapitulatif -->
+                <Border Grid.Row="6" Background="White"
+                        CornerRadius="10" Padding="14,12">
+                    <StackPanel>
+                        <TextBlock Text="RÉCAPITULATIF" FontSize="10"
+                                   FontWeight="SemiBold" Foreground="#999999"
+                                   FontFamily="Segoe UI" Margin="0,0,0,8"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="TxtRecapLabel"
+                                       Text="Sélectionnez un véhicule et des dates"
+                                       Foreground="#CCCCCC" FontSize="12"
+                                       FontFamily="Segoe UI"/>
+                            <TextBlock x:Name="TxtRecapMontant"
+                                       Grid.Column="1"
+                                       FontSize="16" FontWeight="Bold"
+                                       FontFamily="Georgia"
+                                       Foreground="#0F0F0F"
+                                       Visibility="Collapsed"/>
+                        </Grid>
+                        <TextBlock x:Name="TxtRecapReduction"
+                                   Foreground="#27AE60" FontSize="11"
+                                   FontFamily="Segoe UI"
+                                   Visibility="Collapsed"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <TextBlock x:Name="TxtErreur"
+                       Foreground="#C0392B" FontSize="12"
+                       FontFamily="Segoe UI"
+                       Visibility="Collapsed"
+                       Margin="0,12,0,0"
+                       TextWrapping="Wrap"/>
+
+            <Grid Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Annuler"
+                        Style="{StaticResource BtnStyle}"
+                        Background="#E8E8E4" Foreground="#555555"
+                        Click="BtnAnnuler_Click"/>
+                <Button Grid.Column="2" Content="Créer le contrat"
+                        Style="{StaticResource BtnStyle}"
+                        Background="#0F0F0F" Foreground="White"
+                        Click="BtnCreer_Click"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>

@@ -1,0 +1,17 @@
+﻿# Visual Studio cache
+.vs/
+
+# Dossiers de build
+bin/
+obj/
+
+# Fichiers utilisateur
+*.user
+*.suo
+*.userprefs
+
+# Packages NuGet
+packages/
+
+# Logs
+*.log

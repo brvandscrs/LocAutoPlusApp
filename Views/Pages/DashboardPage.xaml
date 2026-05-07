@@ -1,0 +1,172 @@
+﻿<Page x:Class="LocAutoPlusApp.Views.Pages.DashboardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:LocAutoPlusApp.Views.Pages"
+      mc:Ignorable="d"
+      d:DesignHeight="650" d:DesignWidth="870"
+      Title="DashboardPage"
+      Background="#F4F0E8">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="28">
+        <StackPanel>
+
+            <!-- ── Cartes statistiques ── -->
+            <Grid Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Clients -->
+                <Border Grid.Column="0" Background="White" CornerRadius="12"
+                        Margin="0,0,10,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="👥" FontSize="24" Margin="0,0,0,8"/>
+                        <TextBlock x:Name="TxtNbClients" Text="—"
+                                   FontSize="32" FontWeight="Bold"
+                                   FontFamily="Georgia" Foreground="#0F0F0F"/>
+                        <TextBlock Text="Clients" FontSize="12"
+                                   Foreground="#999999" FontFamily="Segoe UI"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Contrats en cours -->
+                <Border Grid.Column="1" Background="White" CornerRadius="12"
+                        Margin="5,0,5,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="📋" FontSize="24" Margin="0,0,0,8"/>
+                        <TextBlock x:Name="TxtNbContratsEnCours" Text="—"
+                                   FontSize="32" FontWeight="Bold"
+                                   FontFamily="Georgia" Foreground="#0F0F0F"/>
+                        <TextBlock Text="Contrats en cours" FontSize="12"
+                                   Foreground="#999999" FontFamily="Segoe UI"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Véhicules disponibles -->
+                <Border Grid.Column="2" Background="White" CornerRadius="12"
+                        Margin="5,0,5,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="🚗" FontSize="24" Margin="0,0,0,8"/>
+                        <TextBlock x:Name="TxtNbVehiculesDispos" Text="—"
+                                   FontSize="32" FontWeight="Bold"
+                                   FontFamily="Georgia" Foreground="#0F0F0F"/>
+                        <TextBlock Text="Véhicules disponibles" FontSize="12"
+                                   Foreground="#999999" FontFamily="Segoe UI"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Membres Club -->
+                <Border Grid.Column="3" Background="#0F0F0F" CornerRadius="12"
+                        Margin="10,0,0,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="⭐" FontSize="24" Margin="0,0,0,8"/>
+                        <TextBlock x:Name="TxtNbMembresClub" Text="—"
+                                   FontSize="32" FontWeight="Bold"
+                                   FontFamily="Georgia" Foreground="#C9A84C"/>
+                        <TextBlock Text="Membres Club" FontSize="12"
+                                   Foreground="#555555" FontFamily="Segoe UI"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ── Ligne 2 : Derniers contrats + Véhicules loués ── -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="320"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Derniers contrats -->
+                <Border Grid.Column="0" Background="White"
+                        CornerRadius="12" Margin="0,0,12,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Dernières réservations"
+                                   FontSize="15" FontWeight="SemiBold"
+                                   FontFamily="Segoe UI" Margin="0,0,0,16"/>
+                        <DataGrid x:Name="DgDerniersContrats"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  BorderThickness="0"
+                                  Background="White"
+                                  RowBackground="White"
+                                  AlternatingRowBackground="#FAFAF8"
+                                  FontFamily="Segoe UI"
+                                  FontSize="12"
+                                  ColumnHeaderHeight="36">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#F4F0E8"/>
+                                    <Setter Property="Foreground" Value="#999999"/>
+                                    <Setter Property="FontSize"   Value="11"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding"    Value="12,0"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Client"   Binding="{Binding Client}"   Width="*"/>
+                                <DataGridTextColumn Header="Véhicule" Binding="{Binding Vehicule}" Width="*"/>
+                                <DataGridTextColumn Header="Début"    Binding="{Binding DateDebut}" Width="90"/>
+                                <DataGridTextColumn Header="Fin"      Binding="{Binding DateFin}"   Width="90"/>
+                                <DataGridTextColumn Header="Montant"  Binding="{Binding Montant}"   Width="90"/>
+                                <DataGridTextColumn Header="Statut"   Binding="{Binding Statut}"    Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Véhicules actuellement loués -->
+                <Border Grid.Column="1" Background="White"
+                        CornerRadius="12" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Véhicules loués"
+                                   FontSize="15" FontWeight="SemiBold"
+                                   FontFamily="Segoe UI" Margin="0,0,0,16"/>
+                        <ItemsControl x:Name="ListVehiculesLoues">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F4F0E8" CornerRadius="8"
+                                            Padding="12,10" Margin="0,0,0,8">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Vehicule}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       FontFamily="Segoe UI"/>
+                                            <TextBlock Text="{Binding Client}"
+                                                       Foreground="#999999"
+                                                       FontSize="11"
+                                                       FontFamily="Segoe UI"
+                                                       Margin="0,3,0,0"/>
+                                            <TextBlock Text="{Binding DateFin}"
+                                                       Foreground="#C9A84C"
+                                                       FontSize="11"
+                                                       FontFamily="Segoe UI"
+                                                       Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock x:Name="TxtAucunLoue"
+                                   Text="Aucun véhicule actuellement loué."
+                                   Foreground="#CCCCCC" FontSize="12"
+                                   FontFamily="Segoe UI"
+                                   Visibility="Collapsed"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
