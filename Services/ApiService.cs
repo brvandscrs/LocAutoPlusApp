@@ -13,7 +13,7 @@ namespace LocAutoPlusApp.Services
     public class ApiService
     {
         private readonly HttpClient _http;
-        private const string BaseUrl = "http://127.0.0.1:8000/api";
+        private const string BaseUrl = "https://locautoplus.fr/api";
 
         public ApiService()
         {

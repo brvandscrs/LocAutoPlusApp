@@ -1,5 +1,4 @@
 ﻿using LocAutoPlusApp.Helpers;
-using LocAutoPlusApp.Views;
 using MySqlConnector;
 using System.Windows;
 using System.Windows.Controls;
