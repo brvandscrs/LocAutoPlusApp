@@ -12,6 +12,7 @@ namespace LocAutoPlusApp.Views.Pages
         private readonly ApiService _api = new();
         private List<EmployeDto> _tousLesEmployes = new();
         private EmployeDto? _employeSelectionne;
+        private bool _dataChargee = false;
 
         public EmployesPage()
         {
@@ -21,10 +22,12 @@ namespace LocAutoPlusApp.Views.Pages
 
         private async Task ChargerEmployes()
         {
+            _dataChargee = false;
             try
             {
                 _tousLesEmployes = await _api.GetEmployesAsync();
                 AppliquerFiltre();
+                _dataChargee = true;
             }
             catch (Exception ex)
             {

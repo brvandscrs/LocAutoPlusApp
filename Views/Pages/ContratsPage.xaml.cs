@@ -13,6 +13,7 @@ namespace LocAutoPlusApp.Views.Pages
         private List<ContratDto> _tousLesContrats = new();
         private ContratDto? _contratSelectionne;
         private readonly int? _filtreClientId;
+        private bool _dataChargee = false;
 
         public ContratsPage()
         {
@@ -34,10 +35,12 @@ namespace LocAutoPlusApp.Views.Pages
 
         private async Task ChargerContrats()
         {
+            _dataChargee = false;
             try
             {
                 _tousLesContrats = await _api.GetContratsAsync(userId: _filtreClientId);
                 AppliquerFiltres();
+                _dataChargee = true;
             }
             catch (Exception ex)
             {

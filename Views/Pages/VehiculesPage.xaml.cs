@@ -11,6 +11,7 @@ namespace LocAutoPlusApp.Views.Pages
         private readonly ApiService _api = new();
         private List<VehiculeDto> _tousLesVehicules = new();
         private VehiculeDto? _vehiculeSelectionne;
+        private bool _dataChargee = false;  // ← ajout
 
         public VehiculesPage()
         {
@@ -20,10 +21,12 @@ namespace LocAutoPlusApp.Views.Pages
 
         private async Task ChargerVehicules()
         {
+            _dataChargee = false;  // ← ajout
             try
             {
                 _tousLesVehicules = await _api.GetVehiculesAsync();
                 DgVehicules.ItemsSource = _tousLesVehicules;
+                _dataChargee = true;  // ← ajout
             }
             catch (Exception ex)
             {
@@ -34,7 +37,7 @@ namespace LocAutoPlusApp.Views.Pages
 
         private void AppliquerFiltres()
         {
-            if (TxtRecherche == null || CbStatut == null) return;
+            if (!_dataChargee || TxtRecherche == null || CbStatut == null) return;  // ← modifié
 
             var statut = (CbStatut.SelectedItem as ComboBoxItem)?.Content?.ToString();
             var recherche = TxtRecherche.Text.ToLower();
