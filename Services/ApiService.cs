@@ -200,6 +200,21 @@ namespace LocAutoPlusApp.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        //private async Task<string> GetAsync(string endpoint)
+        //{
+        //    SetAuthHeader();
+        //    var response = await _http.GetAsync(BaseUrl + endpoint);
+        //    var json = await response.Content.ReadAsStringAsync();
+
+        //    // Debug temporaire
+        //    if (!response.IsSuccessStatusCode)
+        //        System.Windows.MessageBox.Show(
+        //            $"Erreur {(int)response.StatusCode}\nEndpoint : {endpoint}\nRéponse : {json}",
+        //            "API Debug", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+
+        //    return json;
+        //}
+
         private async Task<string> PostAsync(
             string endpoint, object? payload, bool withToken = true)
         {
