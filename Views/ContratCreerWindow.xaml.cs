@@ -28,10 +28,14 @@ namespace LocAutoPlusApp.Views
                 // Clients
                 _clients = await _api.GetClientsAsync();
                 CbClient.ItemsSource = _clients;
+                CbClient.DisplayMemberPath = "NomComplet";  // ← ajoute
+                CbClient.SelectedValuePath = "Id";          // ← ajoute
 
                 // Véhicules disponibles
                 _vehicules = await _api.GetVehiculesAsync(statut: "disponible");
                 CbVehicule.ItemsSource = _vehicules;
+                CbVehicule.DisplayMemberPath = "LibelleComplet";  // ← ajoute
+                CbVehicule.SelectedValuePath = "Id";              // ← ajoute
             }
             catch (Exception ex)
             {

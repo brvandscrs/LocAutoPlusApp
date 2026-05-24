@@ -373,6 +373,7 @@ namespace LocAutoPlusApp.Services
             "hors_service" => "❌ Hors service",
             _ => Statut
         };
+        public string LibelleComplet => $"{Marque} {Modele} — {Immatriculation} ({Annee})";
     }
 
     public class CategorieDto
