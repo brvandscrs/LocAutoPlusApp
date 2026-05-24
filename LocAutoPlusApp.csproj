@@ -9,13 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
-    <PackageReference Include="MySqlConnector" Version="2.5.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <Compile Remove="Helpers\DatabaseHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
 </Project>

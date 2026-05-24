@@ -1,118 +1,43 @@
-﻿using LocAutoPlusApp.Helpers;
-using MySqlConnector;
+﻿using LocAutoPlusApp.Services;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace LocAutoPlusApp.Views.Pages
 {
-    /// <summary>
-    /// Logique d'interaction pour DashboardPage.xaml
-    /// </summary>
     public partial class DashboardPage : Page
     {
+        private readonly ApiService _api = new();
+
         public DashboardPage()
         {
             InitializeComponent();
-            Loaded += (s, e) => ChargerDonnees();
+            Loaded += async (s, e) => await ChargerDonnees();
         }
 
-        private void ChargerDonnees()
+        private async Task ChargerDonnees()
         {
             try
             {
-                using var conn = DatabaseHelper.GetConnection();
-                conn.Open();
+                var stats = await _api.GetDashboardStatsAsync();
+                if (stats == null) return;
 
-                // Nombre de clients
-                TxtNbClients.Text = ExecuterScalar(conn,
-                    "SELECT COUNT(*) FROM users").ToString();
+                TxtNbClients.Text = stats.NbClients.ToString();
+                TxtNbContratsEnCours.Text = stats.NbContratsEnCours.ToString();
+                TxtNbVehiculesDispos.Text = stats.NbVehiculesDispos.ToString();
+                TxtNbMembresClub.Text = stats.NbMembresClub.ToString();
 
-                // Contrats en cours
-                TxtNbContratsEnCours.Text = ExecuterScalar(conn,
-                    "SELECT COUNT(*) FROM contrats WHERE statut IN ('en_attente','confirmee','en_cours')").ToString();
+                DgDerniersContrats.ItemsSource = stats.DerniersContrats;
 
-                // Véhicules disponibles
-                TxtNbVehiculesDispos.Text = ExecuterScalar(conn,
-                    "SELECT COUNT(*) FROM vehicules WHERE statut = 'disponible'").ToString();
-
-                // Membres club
-                TxtNbMembresClub.Text = ExecuterScalar(conn,
-                    "SELECT COUNT(*) FROM club_membres WHERE actif = 1").ToString();
-
-                // Derniers contrats
-                var contrats = new List<dynamic>();
-                var cmdContrats = new MySqlCommand(@"
-                    SELECT CONCAT(u.prenom, ' ', u.nom) AS client,
-                           CONCAT(v.marque, ' ', v.modele) AS vehicule,
-                           DATE_FORMAT(c.date_debut, '%d/%m/%Y') AS date_debut,
-                           DATE_FORMAT(c.date_fin_prevue, '%d/%m/%Y') AS date_fin,
-                           CONCAT(FORMAT(c.montant_total, 2), ' €') AS montant,
-                           c.statut
-                    FROM contrats c
-                    JOIN users u ON c.user_id = u.id
-                    JOIN vehicules v ON c.vehicule_id = v.id
-                    ORDER BY c.created_at DESC
-                    LIMIT 8", conn);
-
-                using (var reader = cmdContrats.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        contrats.Add(new
-                        {
-                            Client = reader.GetString("client"),
-                            Vehicule = reader.GetString("vehicule"),
-                            DateDebut = reader.GetString("date_debut"),
-                            DateFin = reader.GetString("date_fin"),
-                            Montant = reader.GetString("montant"),
-                            Statut = reader.GetString("statut")
-                        });
-                    }
-                }
-                DgDerniersContrats.ItemsSource = contrats;
-
-                // Véhicules loués
-                var loues = new List<dynamic>();
-                var cmdLoues = new MySqlCommand(@"
-                    SELECT CONCAT(v.marque, ' ', v.modele) AS vehicule,
-                           CONCAT(u.prenom, ' ', u.nom) AS client,
-                           CONCAT('Retour : ', DATE_FORMAT(c.date_fin_prevue, '%d/%m/%Y')) AS date_fin
-                    FROM contrats c
-                    JOIN vehicules v ON c.vehicule_id = v.id
-                    JOIN users u ON c.user_id = u.id
-                    WHERE c.statut = 'en_cours'
-                    ORDER BY c.date_fin_prevue ASC", conn);
-
-                using (var reader = cmdLoues.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        loues.Add(new
-                        {
-                            Vehicule = reader.GetString("vehicule"),
-                            Client = reader.GetString("client"),
-                            DateFin = reader.GetString("date_fin")
-                        });
-                    }
-                }
-
-                if (loues.Count == 0)
-                    TxtAucunLoue.Visibility = System.Windows.Visibility.Visible;
+                if (stats.VehiculesLoues.Count == 0)
+                    TxtAucunLoue.Visibility = Visibility.Visible;
                 else
-                    ListVehiculesLoues.ItemsSource = loues;
+                    ListVehiculesLoues.ItemsSource = stats.VehiculesLoues;
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(
-                    "Erreur de connexion à la base de données :\n" + ex.Message,
-                    "Erreur", System.Windows.MessageBoxButton.OK,
-                    System.Windows.MessageBoxImage.Error);
+                MessageBox.Show("Erreur dashboard : " + ex.Message, "Erreur",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private object ExecuterScalar(MySqlConnection conn, string sql)
-        {
-            using var cmd = new MySqlCommand(sql, conn);
-            return cmd.ExecuteScalar() ?? 0;
         }
     }
 }

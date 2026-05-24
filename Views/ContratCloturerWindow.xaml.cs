@@ -2,9 +2,6 @@
 
 namespace LocAutoPlusApp.Views
 {
-    /// <summary>
-    /// Logique d'interaction pour ContratCloturerWindow.xaml
-    /// </summary>
     public partial class ContratCloturerWindow : Window
     {
         public int KmRetour { get; private set; }

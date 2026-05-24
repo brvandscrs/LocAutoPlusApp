@@ -1,15 +1,13 @@
 ﻿using LocAutoPlusApp.Helpers;
-using MySqlConnector;
+using LocAutoPlusApp.Services;
 using System.Windows;
 
 namespace LocAutoPlusApp.Views
 {
-    /// <summary>
-    /// Logique d'interaction pour ContratDemarrerWindow.xaml
-    /// </summary>
     public partial class ContratDemarrerWindow : Window
     {
         private readonly int _contratId;
+        private readonly ApiService _api = new();
         public int KmDepart { get; private set; }
 
         public ContratDemarrerWindow(int contratId, int kmActuel)
@@ -19,7 +17,7 @@ namespace LocAutoPlusApp.Views
             TxtKmDepart.Text = kmActuel.ToString();
         }
 
-        private void BtnDemarrer_Click(object sender, RoutedEventArgs e)
+        private async void BtnDemarrer_Click(object sender, RoutedEventArgs e)
         {
             if (!int.TryParse(TxtKmDepart.Text, out int km) || km < 0)
             {
@@ -30,32 +28,24 @@ namespace LocAutoPlusApp.Views
 
             try
             {
-                using var conn = DatabaseHelper.GetConnection();
-                conn.Open();
+                var result = await _api.UpdateStatutContratAsync(_contratId, new
+                {
+                    statut = "en_cours",
+                    km_depart = km,
+                    employe_id = AppSession.EmployeId,
+                });
 
-                // Met à jour le contrat
-                var cmd = new MySqlCommand(@"
-                    UPDATE contrats SET
-                        statut     = 'en_cours',
-                        km_depart  = @km,
-                        employe_id = @employeId
-                    WHERE id = @id", conn);
-
-                cmd.Parameters.AddWithValue("@km", km);
-                cmd.Parameters.AddWithValue("@employeId", AppSession.EmployeId);
-                cmd.Parameters.AddWithValue("@id", _contratId);
-                cmd.ExecuteNonQuery();
-
-                // Récupère le véhicule_id et le marque comme loué
-                var cmdV = new MySqlCommand(
-                    "UPDATE vehicules SET statut = 'loue' WHERE id = (SELECT vehicule_id FROM contrats WHERE id = @id)",
-                    conn);
-                cmdV.Parameters.AddWithValue("@id", _contratId);
-                cmdV.ExecuteNonQuery();
-
-                KmDepart = km;
-                DialogResult = true;
-                Close();
+                if (result?.Success == true)
+                {
+                    KmDepart = km;
+                    DialogResult = true;
+                    Close();
+                }
+                else
+                {
+                    TxtErreur.Text = result?.Message ?? "Erreur lors du démarrage.";
+                    TxtErreur.Visibility = Visibility.Visible;
+                }
             }
             catch (Exception ex)
             {

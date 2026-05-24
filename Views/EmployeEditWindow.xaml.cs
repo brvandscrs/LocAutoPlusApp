@@ -1,6 +1,4 @@
-﻿using LocAutoPlusApp.Helpers;
-using LocAutoPlusApp.Views.Pages;
-using MySqlConnector;
+﻿using LocAutoPlusApp.Services;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -8,10 +6,11 @@ namespace LocAutoPlusApp.Views
 {
     public partial class EmployeEditWindow : Window
     {
-        private readonly EmployeModel? _employe;
+        private readonly EmployeDto? _employe;
         private readonly bool _isEdit;
+        private readonly ApiService _api = new();
 
-        public EmployeEditWindow(EmployeModel? employe)
+        public EmployeEditWindow(EmployeDto? employe)
         {
             InitializeComponent();
             _employe = employe;
@@ -32,7 +31,7 @@ namespace LocAutoPlusApp.Views
             }
         }
 
-        private void BtnEnregistrer_Click(object sender, RoutedEventArgs e)
+        private async void BtnEnregistrer_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(TxtNom.Text) ||
                 string.IsNullOrWhiteSpace(TxtPrenom.Text) ||
@@ -52,61 +51,43 @@ namespace LocAutoPlusApp.Views
 
             try
             {
-                using var conn = DatabaseHelper.GetConnection();
-                conn.Open();
+                ApiResponse? result;
 
                 if (_isEdit)
                 {
-                    var sql = @"UPDATE employes SET
-                                    nom    = @nom,
-                                    prenom = @prenom,
-                                    email  = @email,
-                                    role   = @role";
-
-                    // Met à jour le mot de passe seulement si renseigné
-                    if (!string.IsNullOrWhiteSpace(TxtNewPassword.Password))
+                    var payload = new
                     {
-                        sql += ", password = @password";
-                    }
-
-                    sql += " WHERE id = @id";
-
-                    var cmd = new MySqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@nom", TxtNom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@prenom", TxtPrenom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@email", TxtEmail.Text.Trim());
-                    cmd.Parameters.AddWithValue("@role", role);
-                    cmd.Parameters.AddWithValue("@id", _employe!.Id);
-
-                    if (!string.IsNullOrWhiteSpace(TxtNewPassword.Password))
-                        cmd.Parameters.AddWithValue("@password",
-                            BCrypt.Net.BCrypt.HashPassword(TxtNewPassword.Password));
-
-                    cmd.ExecuteNonQuery();
+                        nom = TxtNom.Text.Trim(),
+                        prenom = TxtPrenom.Text.Trim(),
+                        email = TxtEmail.Text.Trim(),
+                        role,
+                        password = string.IsNullOrWhiteSpace(TxtNewPassword.Password)
+                                   ? null : TxtNewPassword.Password,
+                    };
+                    result = await _api.UpdateEmployeAsync(_employe!.Id, payload);
                 }
                 else
                 {
-                    var hash = BCrypt.Net.BCrypt.HashPassword(TxtPassword.Password);
-                    var cmd = new MySqlCommand(@"
-                        INSERT INTO employes
-                            (nom, prenom, email, password, role, actif, created_at, updated_at)
-                        VALUES
-                            (@nom, @prenom, @email, @password, @role, 1, NOW(), NOW())", conn);
-
-                    cmd.Parameters.AddWithValue("@nom", TxtNom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@prenom", TxtPrenom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@email", TxtEmail.Text.Trim());
-                    cmd.Parameters.AddWithValue("@password", hash);
-                    cmd.Parameters.AddWithValue("@role", role);
-                    cmd.ExecuteNonQuery();
+                    var payload = new
+                    {
+                        nom = TxtNom.Text.Trim(),
+                        prenom = TxtPrenom.Text.Trim(),
+                        email = TxtEmail.Text.Trim(),
+                        role,
+                        password = TxtPassword.Password,
+                    };
+                    result = await _api.CreateEmployeAsync(payload);
                 }
 
-                DialogResult = true;
-                Close();
-            }
-            catch (MySqlException ex) when (ex.Number == 1062)
-            {
-                AfficherErreur("Cette adresse e-mail est déjà utilisée.");
+                if (result?.Success == true)
+                {
+                    DialogResult = true;
+                    Close();
+                }
+                else
+                {
+                    AfficherErreur(result?.Message ?? "Erreur lors de l'enregistrement.");
+                }
             }
             catch (Exception ex)
             {

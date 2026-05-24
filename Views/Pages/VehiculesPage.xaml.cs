@@ -1,61 +1,29 @@
-﻿using LocAutoPlusApp.Helpers;
-using MySqlConnector;
+﻿using LocAutoPlusApp.Services;
+using LocAutoPlusApp.Views;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace LocAutoPlusApp.Views.Pages
 {
-    /// <summary>
-    /// Logique d'interaction pour VehiculesPage.xaml
-    /// </summary>
     public partial class VehiculesPage : Page
     {
-        private List<VehiculeModel> _tousLesVehicules = new();
-        private VehiculeModel? _vehiculeSelectionne;
+        private readonly ApiService _api = new();
+        private List<VehiculeDto> _tousLesVehicules = new();
+        private VehiculeDto? _vehiculeSelectionne;
 
         public VehiculesPage()
         {
             InitializeComponent();
-            Loaded += (s, e) => ChargerVehicules();
+            Loaded += async (s, e) => await ChargerVehicules();
         }
 
-        // ── Chargement ──────────────────────────────────────────
-        private void ChargerVehicules()
+        private async Task ChargerVehicules()
         {
             try
             {
-                _tousLesVehicules.Clear();
-
-                using var conn = DatabaseHelper.GetConnection();
-                conn.Open();
-
-                var cmd = new MySqlCommand(@"
-                    SELECT v.id, v.immatriculation, v.marque, v.modele,
-                           v.annee, v.km_actuel, v.statut, v.photo_url,
-                           c.nom AS categorie, c.tarif_base_jour
-                    FROM vehicules v
-                    JOIN categories_vehicules c ON v.categorie_id = c.id
-                    ORDER BY v.marque, v.modele", conn);
-
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    _tousLesVehicules.Add(new VehiculeModel
-                    {
-                        Id = reader.GetInt32("id"),
-                        Immatriculation = reader.GetString("immatriculation"),
-                        Marque = reader.GetString("marque"),
-                        Modele = reader.GetString("modele"),
-                        Annee = reader.GetInt32("annee"),
-                        KmActuel = reader.GetInt32("km_actuel"),
-                        Statut = reader.GetString("statut"),
-                        Categorie = reader.GetString("categorie"),
-                        TarifJour = reader.GetDecimal("tarif_base_jour"),
-                    });
-                }
-
-                AppliquerFiltres();
+                _tousLesVehicules = await _api.GetVehiculesAsync();
+                DgVehicules.ItemsSource = _tousLesVehicules;
             }
             catch (Exception ex)
             {
@@ -64,14 +32,12 @@ namespace LocAutoPlusApp.Views.Pages
             }
         }
 
-        // ── Filtres ─────────────────────────────────────────────
         private void AppliquerFiltres()
         {
             if (TxtRecherche == null || CbStatut == null) return;
 
             var statut = (CbStatut.SelectedItem as ComboBoxItem)?.Content?.ToString();
             var recherche = TxtRecherche.Text.ToLower();
-
             var filtres = _tousLesVehicules.AsEnumerable();
 
             if (statut != "Tous" && !string.IsNullOrEmpty(statut))
@@ -96,15 +62,13 @@ namespace LocAutoPlusApp.Views.Pages
             AppliquerFiltres();
         }
 
-        // ── Sélection ───────────────────────────────────────────
         private void DgVehicules_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (DgVehicules.SelectedItem is not VehiculeModel v) return;
+            if (DgVehicules.SelectedItem is not VehiculeDto v) return;
 
             _vehiculeSelectionne = v;
             TxtSelectionner.Visibility = Visibility.Collapsed;
             PanelFiche.Visibility = Visibility.Visible;
-
             TxtFicheNom.Text = $"{v.Marque} {v.Modele}";
 
             var (bg, fg, label) = v.Statut switch
@@ -116,8 +80,10 @@ namespace LocAutoPlusApp.Views.Pages
                 _ => ("#E2E3E5", "#383D41", v.Statut)
             };
 
-            BadgeStatut.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(bg));
-            TxtFicheStatut.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(fg));
+            BadgeStatut.Background = new SolidColorBrush(
+                (Color)ColorConverter.ConvertFromString(bg));
+            TxtFicheStatut.Foreground = new SolidColorBrush(
+                (Color)ColorConverter.ConvertFromString(fg));
             TxtFicheStatut.Text = label;
 
             ListInfos.ItemsSource = new[]
@@ -130,8 +96,7 @@ namespace LocAutoPlusApp.Views.Pages
             };
         }
 
-        // ── Changer statut ──────────────────────────────────────
-        private void BtnChangerStatut_Click(object sender, RoutedEventArgs e)
+        private async void BtnChangerStatut_Click(object sender, RoutedEventArgs e)
         {
             if (_vehiculeSelectionne == null) return;
             if (sender is not Button btn) return;
@@ -140,21 +105,22 @@ namespace LocAutoPlusApp.Views.Pages
 
             if (_vehiculeSelectionne.Statut == "loue")
             {
-                MessageBox.Show("Impossible de modifier le statut d'un véhicule actuellement loué.",
+                MessageBox.Show("Impossible de modifier le statut d'un véhicule loué.",
                     "Action impossible", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
-                using var conn = DatabaseHelper.GetConnection();
-                conn.Open();
-                var cmd = new MySqlCommand(
-                    "UPDATE vehicules SET statut = @statut WHERE id = @id", conn);
-                cmd.Parameters.AddWithValue("@statut", nouveauStatut);
-                cmd.Parameters.AddWithValue("@id", _vehiculeSelectionne.Id);
-                cmd.ExecuteNonQuery();
-                ChargerVehicules();
+                var result = await _api.UpdateVehiculeAsync(
+                    _vehiculeSelectionne.Id,
+                    new { statut = nouveauStatut });
+
+                if (result?.Success == true)
+                    await ChargerVehicules();
+                else
+                    MessageBox.Show(result?.Message ?? "Erreur.",
+                        "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
@@ -163,45 +129,45 @@ namespace LocAutoPlusApp.Views.Pages
             }
         }
 
-        // ── Modifier / Supprimer ────────────────────────────────
         private void BtnModifier_Click(object sender, RoutedEventArgs e)
         {
             if (_vehiculeSelectionne == null) return;
             var dlg = new VehiculeEditWindow(_vehiculeSelectionne);
             if (dlg.ShowDialog() == true)
-                ChargerVehicules();
+                _ = ChargerVehicules();
         }
 
-        private void BtnSupprimer_Click(object sender, RoutedEventArgs e)
+        private async void BtnSupprimer_Click(object sender, RoutedEventArgs e)
         {
             if (_vehiculeSelectionne == null) return;
 
             if (_vehiculeSelectionne.Statut == "loue")
             {
-                MessageBox.Show("Impossible de supprimer un véhicule actuellement loué.",
+                MessageBox.Show("Impossible de supprimer un véhicule loué.",
                     "Action impossible", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             var confirm = MessageBox.Show(
-                $"Supprimer le véhicule {_vehiculeSelectionne.Marque} {_vehiculeSelectionne.Modele} ?",
+                $"Supprimer {_vehiculeSelectionne.Marque} {_vehiculeSelectionne.Modele} ?",
                 "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
             if (confirm != MessageBoxResult.Yes) return;
 
             try
             {
-                using var conn = DatabaseHelper.GetConnection();
-                conn.Open();
-                var cmd = new MySqlCommand(
-                    "DELETE FROM vehicules WHERE id = @id", conn);
-                cmd.Parameters.AddWithValue("@id", _vehiculeSelectionne.Id);
-                cmd.ExecuteNonQuery();
-
-                PanelFiche.Visibility = Visibility.Collapsed;
-                TxtSelectionner.Visibility = Visibility.Visible;
-                _vehiculeSelectionne = null;
-                ChargerVehicules();
+                var result = await _api.DeleteVehiculeAsync(_vehiculeSelectionne.Id);
+                if (result?.Success == true)
+                {
+                    PanelFiche.Visibility = Visibility.Collapsed;
+                    TxtSelectionner.Visibility = Visibility.Visible;
+                    _vehiculeSelectionne = null;
+                    await ChargerVehicules();
+                }
+                else
+                {
+                    MessageBox.Show(result?.Message ?? "Erreur.",
+                        "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -214,30 +180,7 @@ namespace LocAutoPlusApp.Views.Pages
         {
             var dlg = new VehiculeEditWindow(null);
             if (dlg.ShowDialog() == true)
-                ChargerVehicules();
+                _ = ChargerVehicules();
         }
-    }
-
-    // ── Modèle ──────────────────────────────────────────────────
-    public class VehiculeModel
-    {
-        public int Id { get; set; }
-        public string Immatriculation { get; set; } = "";
-        public string Marque { get; set; } = "";
-        public string Modele { get; set; } = "";
-        public int Annee { get; set; }
-        public int KmActuel { get; set; }
-        public string Statut { get; set; } = "";
-        public string Categorie { get; set; } = "";
-        public decimal TarifJour { get; set; }
-
-        public string StatutLabel => Statut switch
-        {
-            "disponible" => "✅ Disponible",
-            "loue" => "🔑 Loué",
-            "maintenance" => "🔧 Maintenance",
-            "hors_service" => "❌ Hors service",
-            _ => Statut
-        };
     }
 }

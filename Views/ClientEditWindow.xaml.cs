@@ -1,19 +1,16 @@
-﻿using LocAutoPlusApp.Helpers;
-using LocAutoPlusApp.Views.Pages;
-using MySqlConnector;
+﻿using LocAutoPlusApp.Services;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace LocAutoPlusApp.Views
 {
-    /// <summary>
-    /// Logique d'interaction pour ClientEditWindow.xaml
-    /// </summary>
     public partial class ClientEditWindow : Window
     {
-        private readonly ClientModel? _client;
+        private readonly ClientDto? _client;
         private readonly bool _isEdit;
+        private readonly ApiService _api = new();
 
-        public ClientEditWindow(ClientModel? client)
+        public ClientEditWindow(ClientDto? client)
         {
             InitializeComponent();
             _client = client;
@@ -35,9 +32,8 @@ namespace LocAutoPlusApp.Views
             }
         }
 
-        private void BtnEnregistrer_Click(object sender, RoutedEventArgs e)
+        private async void BtnEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            // Validation
             if (string.IsNullOrWhiteSpace(TxtNom.Text) ||
                 string.IsNullOrWhiteSpace(TxtPrenom.Text) ||
                 string.IsNullOrWhiteSpace(TxtEmail.Text))
@@ -54,55 +50,47 @@ namespace LocAutoPlusApp.Views
 
             try
             {
-                using var conn = DatabaseHelper.GetConnection();
-                conn.Open();
+                ApiResponse? result;
 
                 if (_isEdit)
                 {
-                    var cmd = new MySqlCommand(@"
-                        UPDATE users SET
-                            nom           = @nom,
-                            prenom        = @prenom,
-                            email         = @email,
-                            telephone     = @telephone,
-                            adresse       = @adresse,
-                            date_naissance = @naissance
-                        WHERE id = @id", conn);
-
-                    cmd.Parameters.AddWithValue("@nom", TxtNom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@prenom", TxtPrenom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@email", TxtEmail.Text.Trim());
-                    cmd.Parameters.AddWithValue("@telephone", TxtTelephone.Text.Trim());
-                    cmd.Parameters.AddWithValue("@adresse", TxtAdresse.Text.Trim());
-                    cmd.Parameters.AddWithValue("@naissance", DpNaissance.SelectedDate.HasValue
-                        ? DpNaissance.SelectedDate.Value.ToString("yyyy-MM-dd") : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@id", _client!.Id);
-                    cmd.ExecuteNonQuery();
+                    result = await _api.UpdateClientAsync(_client!.Id, new
+                    {
+                        nom = TxtNom.Text.Trim(),
+                        prenom = TxtPrenom.Text.Trim(),
+                        email = TxtEmail.Text.Trim(),
+                        telephone = TxtTelephone.Text.Trim(),
+                        adresse = TxtAdresse.Text.Trim(),
+                        date_naissance = DpNaissance.SelectedDate.HasValue
+                            ? DpNaissance.SelectedDate.Value.ToString("yyyy-MM-dd")
+                            : (string?)null,
+                    });
                 }
                 else
                 {
-                    // Hash du mot de passe bcrypt
-                    var hash = BCrypt.Net.BCrypt.HashPassword(TxtPassword.Password);
-
-                    var cmd = new MySqlCommand(@"
-                        INSERT INTO users
-                            (nom, prenom, email, password, telephone, adresse, date_naissance, created_at, updated_at)
-                        VALUES
-                            (@nom, @prenom, @email, @password, @telephone, @adresse, @naissance, NOW(), NOW())", conn);
-
-                    cmd.Parameters.AddWithValue("@nom", TxtNom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@prenom", TxtPrenom.Text.Trim());
-                    cmd.Parameters.AddWithValue("@email", TxtEmail.Text.Trim());
-                    cmd.Parameters.AddWithValue("@password", hash);
-                    cmd.Parameters.AddWithValue("@telephone", TxtTelephone.Text.Trim());
-                    cmd.Parameters.AddWithValue("@adresse", TxtAdresse.Text.Trim());
-                    cmd.Parameters.AddWithValue("@naissance", DpNaissance.SelectedDate.HasValue
-                        ? DpNaissance.SelectedDate.Value.ToString("yyyy-MM-dd") : DBNull.Value);
-                    cmd.ExecuteNonQuery();
+                    result = await _api.CreateClientAsync(new
+                    {
+                        nom = TxtNom.Text.Trim(),
+                        prenom = TxtPrenom.Text.Trim(),
+                        email = TxtEmail.Text.Trim(),
+                        password = TxtPassword.Password,
+                        telephone = TxtTelephone.Text.Trim(),
+                        adresse = TxtAdresse.Text.Trim(),
+                        date_naissance = DpNaissance.SelectedDate.HasValue
+                            ? DpNaissance.SelectedDate.Value.ToString("yyyy-MM-dd")
+                            : (string?)null,
+                    });
                 }
 
-                DialogResult = true;
-                Close();
+                if (result?.Success == true)
+                {
+                    DialogResult = true;
+                    Close();
+                }
+                else
+                {
+                    AfficherErreur(result?.Message ?? "Erreur lors de l'enregistrement.");
+                }
             }
             catch (Exception ex)
             {
