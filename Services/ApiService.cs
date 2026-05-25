@@ -313,6 +313,8 @@ namespace LocAutoPlusApp.Services
         [JsonProperty("email")] public string Email { get; set; } = "";
         [JsonProperty("telephone")] public string Telephone { get; set; } = "—";
         [JsonProperty("adresse")] public string Adresse { get; set; } = "—";
+        [JsonProperty("code_postal")] public string CodePostal { get; set; } = "—";
+        [JsonProperty("ville")] public string Ville { get; set; } = "—";
         [JsonProperty("date_naissance")] public string DateNaissance { get; set; } = "—";
         [JsonProperty("date_inscription")] public string DateInscription { get; set; } = "";
         [JsonProperty("nb_contrats")] public int NbContrats { get; set; }

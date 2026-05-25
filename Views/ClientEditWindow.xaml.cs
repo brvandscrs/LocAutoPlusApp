@@ -24,6 +24,8 @@ namespace LocAutoPlusApp.Views
                 TxtEmail.Text = client.Email;
                 TxtTelephone.Text = client.Telephone == "—" ? "" : client.Telephone;
                 TxtAdresse.Text = client.Adresse == "—" ? "" : client.Adresse;
+                TxtCodePostal.Text = client.CodePostal == "—" ? "" : client.CodePostal; // ← ajout
+                TxtVille.Text = client.Ville == "—" ? "" : client.Ville;      // ← ajout
                 PanelPassword.Visibility = Visibility.Collapsed;
 
                 if (client.DateNaissance != "—" &&
@@ -61,6 +63,8 @@ namespace LocAutoPlusApp.Views
                         email = TxtEmail.Text.Trim(),
                         telephone = TxtTelephone.Text.Trim(),
                         adresse = TxtAdresse.Text.Trim(),
+                        code_postal = TxtCodePostal.Text.Trim(),  // ← ajout
+                        ville = TxtVille.Text.Trim(),        // ← ajout
                         date_naissance = DpNaissance.SelectedDate.HasValue
                             ? DpNaissance.SelectedDate.Value.ToString("yyyy-MM-dd")
                             : (string?)null,
@@ -76,6 +80,8 @@ namespace LocAutoPlusApp.Views
                         password = TxtPassword.Password,
                         telephone = TxtTelephone.Text.Trim(),
                         adresse = TxtAdresse.Text.Trim(),
+                        code_postal = TxtCodePostal.Text.Trim(),  // ← ajout
+                        ville = TxtVille.Text.Trim(),        // ← ajout
                         date_naissance = DpNaissance.SelectedDate.HasValue
                             ? DpNaissance.SelectedDate.Value.ToString("yyyy-MM-dd")
                             : (string?)null,
